@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="24A348" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="EventMapping" representedClassName="EventMapping" syncable="YES" codeGenerationType="class">
+        <attribute name="lastKnownHash" attributeType="String"/>
+        <attribute name="mirrorID" attributeType="String"/>
+        <attribute name="sourceCalendarID" attributeType="String"/>
+        <attribute name="sourceID" attributeType="String"/>
+        <fetchIndex name="bySourceID">
+            <fetchIndexElement property="sourceID" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byMirrorID">
+            <fetchIndexElement property="mirrorID" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="bySourceCalendarID">
+            <fetchIndexElement property="sourceCalendarID" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+</model>
