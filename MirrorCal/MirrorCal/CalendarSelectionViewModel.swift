@@ -51,16 +51,6 @@ final class CalendarSelectionViewModel: ObservableObject {
         }
     }
     
-    /// Sync Start Date (default: Today - 7 days)
-    @Published var syncStartDate: Date = Calendar.current.date(byAdding: .day, value: -7, to: Date())! {
-        didSet { UserDefaults.standard.set(syncStartDate, forKey: "syncStartDate") }
-    }
-    
-    /// Sync End Date (default: Today + 1 year)
-    @Published var syncEndDate: Date = Calendar.current.date(byAdding: .year, value: 1, to: Date())! {
-        didSet { UserDefaults.standard.set(syncEndDate, forKey: "syncEndDate") }
-    }
-    
     /// Current authorization status
     @Published var authorizationStatus: EKAuthorizationStatus = .notDetermined
     
@@ -89,16 +79,7 @@ final class CalendarSelectionViewModel: ObservableObject {
         if let destID = UserDefaults.standard.string(forKey: Self.destinationCalendarKey) {
             destinationCalendarID = destID
         }
-        
-        // Load saved sync window settings
-        if let start = UserDefaults.standard.object(forKey: "syncStartDate") as? Date {
-            syncStartDate = start
-        }
-        
-        if let end = UserDefaults.standard.object(forKey: "syncEndDate") as? Date {
-            syncEndDate = end
-        }
-        
+
         // Check initial authorization status
         authorizationStatus = EKEventStore.authorizationStatus(for: .event)
     }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import EventKit
+import ServiceManagement
 
 /// Settings view for MirrorCal.
 /// Allows users to select which calendars to mirror and trigger manual sync.
@@ -15,9 +16,7 @@ struct SettingsView: View {
     @StateObject private var viewModel = CalendarSelectionViewModel()
     @State private var isSyncing = false
     @State private var lastSyncResult: String?
-    
-    /// Keep SyncEngine alive during async operations
-    @State private var syncEngine: SyncEngine?
+    @State private var launchAtLoginEnabled: Bool = SMAppService.mainApp.status == .enabled
     
     var body: some View {
         VStack(spacing: 0) {
@@ -125,55 +124,32 @@ struct SettingsView: View {
             }
             
             Divider()
-            
-            // Sync Period
-            Text("Synchronization Period")
-                .font(.headline)
-            
-            HStack(alignment: .top, spacing: 20) {
-                // Start Date Picker
-                VStack(alignment: .leading, spacing: 8) {
-                    Label("From", systemImage: "arrow.right.circle")
-                        .foregroundStyle(.blue)
-                        .font(.subheadline)
-                    
-                    DatePicker(
-                        "Start Date",
-                        selection: $viewModel.syncStartDate,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.compact)
-                    .labelsHidden()
-                }
-                
-                // Arrow separator
-                Image(systemName: "arrow.right")
+
+            // Sync Period — automatic, no manual date selection
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Synchronization Period")
+                    .font(.headline)
+                Text(SyncEngine.syncWindowDescription)
+                    .font(.subheadline)
+                Text("Recalculated automatically on every sync — nothing to select.")
+                    .font(.caption)
                     .foregroundStyle(.secondary)
-                    .padding(.top, 32)
-                
-                // End Date Picker
-                VStack(alignment: .leading, spacing: 8) {
-                    Label("To", systemImage: "arrow.left.circle")
-                        .foregroundStyle(.green)
-                        .font(.subheadline)
-                    
-                    DatePicker(
-                        "End Date",
-                        selection: $viewModel.syncEndDate,
-                        in: viewModel.syncStartDate...,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.compact)
-                    .labelsHidden()
-                }
             }
-            .frame(maxWidth: .infinity)
-            
-            // Period summary
-            Text("Events between \(formattedDate(viewModel.syncStartDate)) and \(formattedDate(viewModel.syncEndDate)) will be synced.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, alignment: .center)
+
+            Divider()
+
+            // Automation
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Automation")
+                    .font(.headline)
+                Toggle("Launch at Login", isOn: $launchAtLoginEnabled)
+                    .onChange(of: launchAtLoginEnabled) { _, newValue in
+                        setLoginItemEnabled(newValue)
+                    }
+                Text("MirrorCal syncs automatically whenever a source calendar changes — the button below is just a manual override.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding()
         .background(Color(nsColor: .controlBackgroundColor))
@@ -328,6 +304,10 @@ struct SettingsView: View {
                         await viewModel.loadCalendars()
                     }
                 }
+                Divider()
+                Button("Force Full Resync") {
+                    performFullResync()
+                }
             } label: {
                 Image(systemName: "ellipsis.circle")
             }
@@ -368,18 +348,8 @@ struct SettingsView: View {
     private func performSync() {
         isSyncing = true
         lastSyncResult = nil
-        
-        // Create sync engine and keep reference alive via @State
-        let engine = SyncEngine()
-        engine.setSourceCalendars(viewModel.selectedCalendarIDs)
-        
-        // Configure sync window
-        engine.startDate = viewModel.syncStartDate
-        engine.endDate = viewModel.syncEndDate
-        
-        self.syncEngine = engine
-        
-        engine.performSync { [self] result in
+
+        SyncEngine.shared.performSync { result in
             isSyncing = false
             switch result {
             case .success(let syncResult):
@@ -387,8 +357,35 @@ struct SettingsView: View {
             case .failure(let error):
                 lastSyncResult = "Error: \(error.localizedDescription)"
             }
-            // Clear the reference after completion
-            syncEngine = nil
+        }
+    }
+
+    private func performFullResync() {
+        isSyncing = true
+        lastSyncResult = nil
+
+        SyncEngine.shared.performFullResync { result in
+            isSyncing = false
+            switch result {
+            case .success(let syncResult):
+                lastSyncResult = "Full resync: \(syncResult.description)"
+            case .failure(let error):
+                lastSyncResult = "Error: \(error.localizedDescription)"
+            }
+        }
+    }
+
+    private func setLoginItemEnabled(_ enabled: Bool) {
+        do {
+            if enabled {
+                try SMAppService.mainApp.register()
+            } else {
+                try SMAppService.mainApp.unregister()
+            }
+        } catch {
+            print("[SettingsView] Failed to \(enabled ? "register" : "unregister") login item: \(error.localizedDescription)")
+            // Revert the toggle to reflect the actual state after a failed change.
+            launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
         }
     }
     
@@ -409,12 +406,6 @@ struct SettingsView: View {
         }
     }
     
-    private func formattedDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-        return formatter.string(from: date)
-    }
 }
 
 // MARK: - Calendar Row View
