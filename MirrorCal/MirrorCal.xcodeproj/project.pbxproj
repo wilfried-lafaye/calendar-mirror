@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3B2AAA332F4DA7D300D1DC3A /* MirrorCal.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3B2AAA312F4DA7D300D1DC3A /* MirrorCal.xcdatamodeld */; };
+		A1000001227D3F0000A10001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000001227D3F0000A10002 /* Assets.xcassets */; };
 		A1000001227D3F0000000001 /* MirrorCalApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001227D3F0000000002 /* MirrorCalApp.swift */; };
 		A1000001227D3F0000000003 /* MenuBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001227D3F0000000004 /* MenuBarManager.swift */; };
 		A1000001227D3F0000000005 /* PermissionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001227D3F0000000006 /* PermissionsManager.swift */; };
@@ -15,10 +16,12 @@
 		A1000001227D3F0000000090 /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001227D3F0000000091 /* SyncEngine.swift */; };
 		A1000001227D3F00000000A0 /* CalendarSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001227D3F00000000A1 /* CalendarSelectionViewModel.swift */; };
 		A1000001227D3F00000000A2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001227D3F00000000A3 /* SettingsView.swift */; };
+		A1000001227D3F00000000B0 /* RefreshCalendarsIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001227D3F00000000B1 /* RefreshCalendarsIntent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3B2AAA322F4DA7D300D1DC3A /* MirrorCal.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MirrorCal.xcdatamodel; sourceTree = "<group>"; };
+		A1000001227D3F0000A10002 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1000001227D3F0000000002 /* MirrorCalApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirrorCalApp.swift; sourceTree = "<group>"; };
 		A1000001227D3F0000000004 /* MenuBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarManager.swift; sourceTree = "<group>"; };
 		A1000001227D3F0000000006 /* PermissionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsManager.swift; sourceTree = "<group>"; };
@@ -29,6 +32,7 @@
 		A1000001227D3F0000000091 /* SyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
 		A1000001227D3F00000000A1 /* CalendarSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSelectionViewModel.swift; sourceTree = "<group>"; };
 		A1000001227D3F00000000A3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A1000001227D3F00000000B1 /* RefreshCalendarsIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshCalendarsIntent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +49,7 @@
 		A1000001227D3F0000000011 /* MirrorCal */ = {
 			isa = PBXGroup;
 			children = (
+				A1000001227D3F0000A10002 /* Assets.xcassets */,
 				A1000001227D3F0000000002 /* MirrorCalApp.swift */,
 				A1000001227D3F0000000004 /* MenuBarManager.swift */,
 				A1000001227D3F0000000006 /* PermissionsManager.swift */,
@@ -52,6 +57,7 @@
 				A1000001227D3F0000000091 /* SyncEngine.swift */,
 				A1000001227D3F00000000A1 /* CalendarSelectionViewModel.swift */,
 				A1000001227D3F00000000A3 /* SettingsView.swift */,
+				A1000001227D3F00000000B1 /* RefreshCalendarsIntent.swift */,
 				A1000001227D3F0000000007 /* Info.plist */,
 				A1000001227D3F0000000009 /* MirrorCal.entitlements */,
 			);
@@ -133,6 +139,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1000001227D3F0000A10001 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,6 +158,7 @@
 				A1000001227D3F0000000090 /* SyncEngine.swift in Sources */,
 				A1000001227D3F00000000A0 /* CalendarSelectionViewModel.swift in Sources */,
 				A1000001227D3F00000000A2 /* SettingsView.swift in Sources */,
+				A1000001227D3F00000000B0 /* RefreshCalendarsIntent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

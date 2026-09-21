@@ -23,9 +23,18 @@ final class MenuBarManager {
     
     /// The Settings window (kept alive while open)
     private var settingsWindow: NSWindow?
-    
+
+    /// The "Sync Now" menu item (kept around to toggle its title/enabled state while syncing)
+    private var syncNowItem: NSMenuItem?
+
+    /// The "Last sync: ..." menu item (kept around so `updateSyncStatus` doesn't rely on a fixed index)
+    private var lastSyncItem: NSMenuItem?
+
+    /// Called when the user picks "Sync Now" (or its ⌘R key equivalent) from the menu.
+    var onSyncNow: (() -> Void)?
+
     // MARK: - Initialization
-    
+
     init() {
         setupStatusItem()
     }
@@ -60,12 +69,23 @@ final class MenuBarManager {
         menu?.addItem(headerItem)
         
         menu?.addItem(NSMenuItem.separator())
-        
+
+        // Sync Now — manual refresh, with a ⌘R keyboard shortcut
+        let syncNowItem = NSMenuItem(
+            title: "Sync Now",
+            action: #selector(syncNow),
+            keyEquivalent: "r"
+        )
+        syncNowItem.target = self
+        menu?.addItem(syncNowItem)
+        self.syncNowItem = syncNowItem
+
         // Sync status (placeholder)
-        let syncStatusItem = NSMenuItem(title: "Last sync: Never", action: nil, keyEquivalent: "")
-        syncStatusItem.isEnabled = false
-        menu?.addItem(syncStatusItem)
-        
+        let lastSyncItem = NSMenuItem(title: "Last sync: Never", action: nil, keyEquivalent: "")
+        lastSyncItem.isEnabled = false
+        menu?.addItem(lastSyncItem)
+        self.lastSyncItem = lastSyncItem
+
         menu?.addItem(NSMenuItem.separator())
         
         // Settings menu item
@@ -134,25 +154,35 @@ final class MenuBarManager {
     @objc private func quitApp() {
         NSApp.terminate(nil)
     }
-    
+
+    /// Triggers a manual sync (menu click or the ⌘R key equivalent)
+    @objc private func syncNow() {
+        onSyncNow?()
+    }
+
     // MARK: - Public Methods
-    
+
     /// Updates the sync status displayed in the menu
     /// - Parameter date: The last sync date, or nil if never synced
     func updateSyncStatus(lastSync date: Date?) {
-        guard let menu = menu else { return }
-        
-        // Find the status item (index 2 after header and separator)
-        if menu.items.count > 2 {
-            let statusItem = menu.items[2]
-            if let date = date {
-                let formatter = RelativeDateTimeFormatter()
-                formatter.unitsStyle = .abbreviated
-                let relativeTime = formatter.localizedString(for: date, relativeTo: Date())
-                statusItem.title = "Last sync: \(relativeTime)"
-            } else {
-                statusItem.title = "Last sync: Never"
-            }
+        guard let lastSyncItem = lastSyncItem else { return }
+
+        if let date = date {
+            let formatter = RelativeDateTimeFormatter()
+            formatter.unitsStyle = .abbreviated
+            let relativeTime = formatter.localizedString(for: date, relativeTo: Date())
+            lastSyncItem.title = "Last sync: \(relativeTime)"
+        } else {
+            lastSyncItem.title = "Last sync: Never"
         }
+    }
+
+    /// Reflects whether a sync is currently running by disabling "Sync Now" (which also
+    /// suppresses its ⌘R key equivalent) and swapping its title.
+    /// - Parameter inProgress: Whether a sync is currently running
+    func setSyncInProgress(_ inProgress: Bool) {
+        guard let syncNowItem = syncNowItem else { return }
+        syncNowItem.title = inProgress ? "Syncing..." : "Sync Now"
+        syncNowItem.isEnabled = !inProgress
     }
 }

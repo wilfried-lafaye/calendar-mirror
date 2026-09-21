@@ -29,7 +29,8 @@ struct MainView_iOS: View {
                         Image(systemName: isSyncing ? "arrow.triangle.2.circlepath" : "calendar.badge.checkmark")
                             .font(.system(size: 60))
                             .foregroundColor(.blue)
-                            .symbolEffect(.rotate, isActive: isSyncing)
+                            .rotationEffect(Angle(degrees: isSyncing ? 360 : 0))
+                            .animation(isSyncing ? Animation.linear(duration: 1).repeatForever(autoreverses: false) : .default, value: isSyncing)
                         
                         Text(isSyncing ? "Syncing..." : "Ready to Mirror")
                             .font(.title2)

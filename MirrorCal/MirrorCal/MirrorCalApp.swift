@@ -54,6 +54,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Initialize Menu Bar
         menuBarManager = MenuBarManager()
+        menuBarManager?.onSyncNow = { [weak self] in
+            self?.runSync(reason: "manual")
+        }
 
         // Request calendar permissions on launch
         Task {
@@ -131,13 +134,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func runSync(reason: String) {
+        menuBarManager?.setSyncInProgress(true)
         SyncEngine.shared.performSync { [weak self] result in
+            self?.menuBarManager?.setSyncInProgress(false)
             switch result {
             case .success(let syncResult):
                 self?.menuBarManager?.updateSyncStatus(lastSync: Date())
-                print("[MirrorCal] Auto-sync (\(reason)): \(syncResult.description)")
+                print("[MirrorCal] Sync (\(reason)): \(syncResult.description)")
             case .failure(let error):
-                print("[MirrorCal] Auto-sync (\(reason)) failed: \(error.localizedDescription)")
+                print("[MirrorCal] Sync (\(reason)) failed: \(error.localizedDescription)")
             }
         }
     }

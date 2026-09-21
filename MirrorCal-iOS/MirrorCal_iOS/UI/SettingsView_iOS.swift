@@ -74,10 +74,10 @@ struct SettingsView_iOS: View {
         }
         .onAppear(perform: loadCalendars)
         // Auto-save: persist changes whenever values change
-        .onChange(of: selectedSourceIDs) { _ in autoSave() }
-        .onChange(of: destinationCalendarID) { _ in autoSave() }
-        .onChange(of: syncStartDate) { _ in autoSave() }
-        .onChange(of: syncEndDate) { _ in autoSave() }
+        .onChange(of: selectedSourceIDs) { autoSave() }
+        .onChange(of: destinationCalendarID) { autoSave() }
+        .onChange(of: syncStartDate) { autoSave() }
+        .onChange(of: syncEndDate) { autoSave() }
     }
     
     // MARK: - Permission States
